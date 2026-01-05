@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wanderlust - Travel &amp; E-commerce</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .hero-section {
+            background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+            background-size: cover;
+            background-position: center;
+        }
+        .transparent-bg {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .scroll-down-arrow {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+        .scroll-down-arrow span {
+            display: block;
+            width: 24px;
+            height: 24px;
+            border-bottom: 2px solid white;
+            border-right: 2px solid white;
+            transform: rotate(45deg);
+            margin: -6px;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-20px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+        }
+        @keyframes ping-once {
+            75%, 100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+        .animate-ping-once {
+            animation: ping-once 0.5s cubic-bezier(0, 0, 0.2, 1);
+        }
+        .page {
+            display: none;
+        }
+        .page.active {
+            display: block;
+        }
+    </style>
+</head>
+<script>
+document.getElementById("registerForm").addEventListener("submit", async function (e) {
+  e.preventDefault(); // 🚨 STOPS 405 ERROR
+
+  const username = document.getElementById("reg-username").value;
+  const email = document.getElementById("reg-email-address").value;
+
+  try {
+    const res = await fetch("https://cyber-admin-backend-1.onrender.com/log", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "register",
+        username: username,
+        email: email,
+        page: window.location.pathname
+      })
+    });
+
+    if (res.ok) {
+      alert("Registered successfully ✅");
+    } else {
+      alert("Backend error ❌");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Network error ❌");
+  }
+});
+</script>
+<script>
+fetch("https://cyber-admin-backend-1.onrender.com/log", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    action: "Page Loaded",
+    page: window.location.pathname
+  })
+})
+.then(res => res.json())
+.then(data => console.log("Log sent:", data))
+.catch(err => console.error("Log error:", err));
+</script>
+
+<body class="text-gray-800">
+<div id="app">
+<div class="page active" id="main-content">
+<header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 transparent-bg">
+<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+<a class="text-3xl font-bold text-white" href="#" id="home-link">Wanderlust</a>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-white hover:text-green-200" href="#home">Home</a>
+<a class="text-white hover:text-green-200" href="#destinations">Destinations</a>
+<a class="text-white hover:text-green-200" href="#shop">Shop</a>
+<a class="text-white hover:text-green-200" href="#about">About</a>
+<a class="text-white hover:text-green-200" href="#contact">Contact</a>
+</div>
+<div class="flex items-center space-x-4">
+<a class="text-white hover:text-green-200 transition duration-300" href="#login" id="login-link">Login</a>
+<a class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full transition duration-300" href="#register" id="register-link">Register</a>
+<div class="hidden md:block">
+  <input
+    type="text"
+    id="searchInput"
+    placeholder="Search destinations or products..."
+    class="px-4 py-2 rounded-full text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400 w-64"
+  />
+</div>
+<a class="relative text-white hover:text-green-200" href="#cart" id="cart-link">
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300 search-item"
+     data-search="paris france eiffel travel"
+     data-search="tokyo japan travel city"
+    data-search="venice italy canals travel">
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300 flex flex-col search-item"
+     data-search="backpack travel bag luggage"
+     data-search="water bottle travel drink"
+    data-search="journal notebook travel diary"
+    data-search="camera travel photography">
+<span class="material-icons">shopping_cart</span>
+<span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center" id="cart-count">0</span>
+</a>
+<button class="md:hidden text-white">
+<span class="material-icons">menu</span>
+</button>
+</div>
+</nav>
+</header>
+<main>
+<section class="hero-section h-screen flex items-center justify-center text-white text-center relative" id="home">
+<div class="transparent-bg p-12 rounded-xl">
+<h1 class="text-5xl md:text-7xl font-bold mb-4">Discover Your Next Adventure</h1>
+<p class="text-xl mb-8">Explore breathtaking destinations and shop for your travel essentials.</p>
+<a class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition duration-300" href="#destinations">Explore Now</a>
+</div>
+<a class="scroll-down-arrow" href="#destinations">
+<span></span>
+</a>
+</section>
+<section class="py-20 bg-gray-50" id="destinations">
+<div class="container mx-auto px-6">
+<h2 class="text-4xl font-bold text-center mb-12">Popular Destinations</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300">
+<img alt="Eiffel Tower in Paris" class="w-full h-64 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD57zdEgX-QpiZjfMpe7gLrAaKm6zbikT-G0TN8JLzelskHHXOD2bB7g0KjnivLLRXIrSVVv8rG5ktWuDEnNipwCCz5SFoKPesFkK3XayoIdzzfIc49EK76WA2KSfH1_PT6DJI77LFnPoRNsnKvY-zY8GWGZxfgMKvob-9e6QkF4BgZMhFk2i-6TdSasNofTx8Wd7RWXmA5vnOKXoxReqETRa3SjHbnQvdzt5CiJ0R-A8U9pO5GY67I2Hmqz5A9ethZH8rBjns1vVW0"/>
+<div class="p-6">
+<h3 class="text-2xl font-bold mb-2">Paris, France</h3>
+<p class="text-gray-600 mb-4">The city of love, lights, and endless charm.</p>
+<a class="text-green-500 hover:text-green-700 font-semibold" href="#destination-details" id="paris-details-link">Learn More</a>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300">
+<img alt="Neon-lit street in Tokyo" class="w-full h-64 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqUghR_OeGaXDkE9nVMvq0hyozL6B0x18MI7gPlyCI41CQujPrwJXw-mUMZHvI2aaKs2h1hps14-UFBeHdG-k64ir8P8Fird8eckim9w_QRmdzqsGYavYazjSFRPv8-EyZC-bEws6plWvv0638Cxxv2qljLiPp-uqoHh_8XU3rcWJDcNppcMIWBmiwpVjr_-Y4snGgvzQJYFEcqjf3hOT4jCWWPfUYPhd68WchK7BlTkSaCOKWNyOlvL473ImUVLNA7U6MOTVgzlwA"/>
+<div class="p-6">
+<h3 class="text-2xl font-bold mb-2">Tokyo, Japan</h3>
+<p class="text-gray-600 mb-4">A vibrant metropolis where tradition meets the future.</p>
+<a class="text-green-500 hover:text-green-700 font-semibold" href="#destination-details" id="tokyo-details-link">Learn More</a>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300">
+<img alt="Canals of Venice" class="w-full h-64 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDG-wXSQYXXAMY9Pescy6rDyZEmR02W71LH-MSj5eA6om_aVNaQv349dudCLSjnI7xSWPDvP0K2Ul38FrAk8nEkio4HRFJ2zrQRYMT0m8qpPmSGcGRumyZsKl6P5MsTuc7bn7dsH84rM1OcC5QfKqOBaQc367XYjllRmzbTKoh5QiGHR3_LR6cYhhKg5GS9plRGZKnD7ZWbu09VAUim0MrMhm9lJzpVk8603Jexzadv9xO2lqYrxIL6yC6_HTF35Sog7ll_MAbi-fpj"/>
+<div class="p-6">
+<h3 class="text-2xl font-bold mb-2">Venice, Italy</h3>
+<p class="text-gray-600 mb-4">A city of canals, gondolas, and captivating architecture.</p>
+<a class="text-green-500 hover:text-green-700 font-semibold" href="#destination-details" id="venice-details-link">Learn More</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-20" id="shop">
+<div class="container mx-auto px-6">
+<h2 class="text-4xl font-bold text-center mb-12">Travel Essentials</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300 flex flex-col">
+<img alt="Travel backpack" class="w-full h-64 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBw8otuF3_pIR44h5KRF6u8UVY8VKRcsJ7x-knpjO32eJY_Ux5wNnYC-gUKx4Tn25wLRTXv4xRLtvmBZIAvMur_Vx4z14VzaGFhOk6Zuu2cCZ0O7tmJQeUeiSLjJmhFaUITxaj5AsTiqeiuhAKLVB21d7K7P5Nx8oTN765xPg2A1OVwYpesUQF7mfxHBmQPpAdS7ACt-hTe4fdoPsT4LhehkOsTkheYoqkCbegTJetpgn2ClDih7lxhR94tfBWML8HeqUOBNlSoI3Pm"/>
+<div class="p-6 flex-grow flex flex-col">
+<h3 class="text-xl font-bold mb-2">Durable Travel Backpack</h3>
+<p class="text-gray-600 mb-4 flex-grow">Water-resistant and spacious for all your needs.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="text-2xl font-bold text-green-500">₹6,650</span>
+<button class="add-to-cart-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 flex items-center">
+<span class="material-icons text-lg mr-1">add_shopping_cart</span>
+                                            Add
+                                        </button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300 flex flex-col">
+<img alt="Portable water bottle" class="w-full h-64 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoeFg6uW6HS7rYTZSuSJxVPp61sXdRsxLGAxdESvtsyH2k7ilU2UWvCTC6w5hw9QBhnCHhZdJsZ8hUB6JNI0uhfeCk-Atv_xcPjouMNFIk4esPs-lDEMU-feyHygGIQd2t2xHoDXglOCDWpCTgp4bBbzYDHku8p9EPRQesOKRHuIpGcA63KyzLyXmqE4XStLx8AAwKyU3UROzxcCTlXSLD72pCJCwrJo2jxYN8U5xcECWbeYaJPTKZpVW3W9y0NuiLnE-RuvvS4RqX"/>
+<div class="p-6 flex-grow flex flex-col">
+<h3 class="text-xl font-bold mb-2">Insulated Water Bottle</h3>
+<p class="text-gray-600 mb-4 flex-grow">Keeps your drinks cold for 24 hours.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="text-2xl font-bold text-green-500">₹2,080</span>
+<button class="add-to-cart-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 flex items-center">
+<span class="material-icons text-lg mr-1">add_shopping_cart</span>
+                                            Add
+                                        </button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300 flex flex-col">
+<img alt="Travel journal and pen" class="w-full h-64 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH7VDzTk0xCVRHHg4NK5AvjgkC-bZMeQYa3cdAGPZK6D9ugWo6hAeCZJfCx29o3t-cGWT7jvBdSEHIFVmr063EfxyiFsm3cPqA8_LHNMjTj4WocsaKsWn2pr6MXBL9uv8hUvDJtRTZBTrF1O2K74v5PpTsYNN6NNWzZjBEvI48oOpppr04p7SCURH5ClrHZRGa5vTzEcURpopY8yGcRwgIXly2mRWtNMEFo0F9zUrtEJhyGoDzAkMKNRGSDhCZOjwvlsNLunrSTPFZ"/>
+<div class="p-6 flex-grow flex flex-col">
+<h3 class="text-xl font-bold mb-2">Travel Journal</h3>
+<p class="text-gray-600 mb-4 flex-grow">Document your adventures on the go.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="text-2xl font-bold text-green-500">₹1,330</span>
+<button class="add-to-cart-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 flex items-center">
+<span class="material-icons text-lg mr-1">add_shopping_cart</span>
+                                            Add
+                                        </button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300 flex flex-col">
+<img alt="Compact camera" class="w-full h-64 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNQUzQ-D8The1Sds_hBFuDVSnYPR05vLhLrK5j1MoS5VvLGdZFcIvzoo4IIFL7MtQGFiGHliTV3yyZWP7837tXxyiVC0DrxhQDObd6E8GX892LvyDQku1HpAa7usGzGrHaXMfyWAEa3M45y5N0AojMAKxGBBI_OR952sGf7bNc7pVPWdRLqng-haG5wr_6skUORiZZpiswKRiJ1NPQlE6cCVxITkZzBgEGii6zaRVYZnIKUH-QsylM3-pDkuM8Q4gLn2jy9sa71eve"/>
+<div class="p-6 flex-grow flex flex-col">
+<h3 class="text-xl font-bold mb-2">Compact Camera</h3>
+<p class="text-gray-600 mb-4 flex-grow">Capture high-quality memories effortlessly.</p>
+<div class="flex justify-between items-center mt-auto">
+<span class="text-2xl font-bold text-green-500">₹41,650</span>
+<button class="add-to-cart-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 flex items-center">
+<span class="material-icons text-lg mr-1">add_shopping_cart</span>
+                                            Add
+                                        </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-gray-800 text-white py-12">
+<div class="container mx-auto px-6 text-center">
+<p>© 2024 Wanderlust. All rights reserved.</p>
+<div class="flex justify-center space-x-4 mt-4">
+<a class="hover:text-green-400" href="#">Facebook</a>
+<a class="hover:text-green-400" href="#">Instagram</a>
+<a class="hover:text-green-400" href="#">Twitter</a>
+</div>
+</div>
+</footer>
+</div>
+<div class="page" id="destination-details-page">
+<header class="fixed top-0 left-0 right-0 z-50 bg-gray-900 bg-opacity-80 shadow-lg">
+<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+<a class="text-3xl font-bold text-white back-to-home" href="#">Wanderlust</a>
+<div class="flex items-center space-x-4">
+<a class="text-white hover:text-green-200 back-to-home" href="#">Back to Home</a>
+</div>
+</nav>
+</header>
+<main class="pt-20">
+<section class="py-20">
+<div class="container mx-auto px-6">
+<div class="lg:flex">
+<div class="lg:w-1/2">
+<img alt="Paris, France" class="rounded-lg shadow-lg w-full h-auto object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZa3ld-303rwfRH6AGkEZpe5Sx_cbu4iJNxkZdDu2u92-v830uJ_H6Vx0tVjzoApNgazMmYn-DuHy00U7MDZTl3DBE_z-S3A-_EAi392-DMA84nofWA58hCvKP4FzKFPfevIb5GMFv5TtV8UfmFm1oQsAflvejRsbKrs9bcjih9DCWRCfS5nO2FcGM1vy9HcXGEFZ9Vu4ZxU-Tls6s0XaazR5i_bHOsOoRd0bHTGF311Mu1EKgl3P9C55FN5AzOzH5WQs4DaNZQTGp"/>
+</div>
+<div class="lg:w-1/2 lg:pl-12 mt-8 lg:mt-0">
+<h1 class="text-5xl font-bold mb-4">Paris, France</h1>
+<p class="text-xl text-gray-600 mb-6">The city of love, lights, and endless charm. Paris is a global center for art, fashion, gastronomy and culture. Its 19th-century cityscape is crisscrossed by wide boulevards and the River Seine.</p>
+<div class="mb-6">
+<h3 class="text-2xl font-semibold mb-3">Top Attractions</h3>
+<ul class="list-disc list-inside text-gray-700 space-y-2">
+<li>Eiffel Tower</li>
+<li>Louvre Museum</li>
+<li>Notre-Dame Cathedral</li>
+<li>Champs-Élysées</li>
+<li>Montmartre</li>
+</ul>
+</div>
+<div class="mb-8">
+<h3 class="text-2xl font-semibold mb-3">Best Time to Visit</h3>
+<p class="text-gray-700">The best time to visit Paris is from April to June and from October to early November when the weather is mild and pleasant and the tourist crowds are smaller than in summer.</p>
+</div>
+<a class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition duration-300 inline-block" href="#">Book a Tour</a>
+</div>
+</div>
+<div class="mt-20">
+<h2 class="text-4xl font-bold text-center mb-12">Discover More in Paris</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300">
+<img alt="Parisian Cafe" class="w-full h-48 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFqXcYhBDXMUZ95lzoo8jzBkrq1iXc6ug0LMT0TuRxVApKWf2xwNNguKR5fYpsilQV605JH4ITUOnvGQ132iRe2c5L2dBUV7qRQ-OG3FJr1odyKORpAJKt-9eVTUDgebnf-e9ddLnrpKhVezFu9cuv87SHUe5Lv6iUxWauYTBE86ZvyQoYt2gb1QqU4mdJdGoQA9KPOWIckWP1m6XZs2kqZYCTgq4Dq5yg5eg7Pvoevfbc4KDYhHFvuIU2BF8Ax29wAb5ImywxzOb9"/>
+<div class="p-6">
+<h3 class="text-xl font-bold mb-2">Parisian Cuisine Tour</h3>
+<p class="text-gray-600 mb-4">Taste the best of Parisian food, from croissants to coq au vin.</p>
+<a class="text-green-500 hover:text-green-700 font-semibold" href="#">Learn More</a>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300">
+<img alt="Seine River Cruise" class="w-full h-48 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCwDlD3GldduGnrlHxXIwEboeueI9AhWi6OUxGFaRNLFt2NGAeAIc-AYNNkC0OdCBOqvnc3OwyRUP0NxHeWWA88ixposDJ1h-ZdbVq7TIhKmQbif_pE5qg4-oEhW6kvGZmUPZKkVJ-vwGcU6rgzzuXPX3Lk37FmhbGf5EswVo8gQVJCI9MdIMONK_JF7jzVEl-7bzHNm2Y2y7Gn4hDAwHyqOHKWNrkY7e7zYk0-vZzN0bI9QOFP9h8vrK-Sc9OPbo4A2VPBMtG7tV3b"/>
+<div class="p-6">
+<h3 class="text-xl font-bold mb-2">Seine River Cruise</h3>
+<p class="text-gray-600 mb-4">See Paris's iconic monuments from a different perspective.</p>
+<a class="text-green-500 hover:text-green-700 font-semibold" href="#">Learn More</a>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-lg overflow-hidden card-hover transition duration-300">
+<img alt="Palace of Versailles" class="w-full h-48 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5TPszVyoaOfUaJ0z3EB5btYAhJfJQGu5G4dIp8LVx4kDwhBLDWgzFqvWuwSor6d6C4CWV3iR2PSMujw2FIV4KnLngZ9R5oHC1rGs9_w7PynunRy5kpCjYZ26ULhrCPYwlofEzlIKK2Tp-WOTOZalbXwwFaUJCQ_uEwIW1Y9-gT-5ryXBGfRakvJjuqIpDAHIFBJkTYOrNL1Wp0wMb6qwbIdtJQXnz-YMsyMdBzi6qBcBX2ZayG6uAe7518_0Qo4fFGKbwwaNjyVh9"/>
+<div class="p-6">
+<h3 class="text-xl font-bold mb-2">Versailles Palace Day Trip</h3>
+<p class="text-gray-600 mb-4">Explore the opulent palace and gardens of King Louis XIV.</p>
+<a class="text-green-500 hover:text-green-700 font-semibold" href="#">Learn More</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-gray-800 text-white py-12">
+<div class="container mx-auto px-6 text-center">
+<p>© 2024 Wanderlust. All rights reserved.</p>
+<div class="flex justify-center space-x-4 mt-4">
+<a class="hover:text-green-400" href="#">Facebook</a>
+<a class="hover:text-green-400" href="#">Instagram</a>
+<a class="hover:text-green-400" href="#">Twitter</a>
+</div>
+</div>
+</footer>
+</div>
+<div class="page" id="login-page">
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 hero-section">
+<div class="max-w-md w-full space-y-8 transparent-bg p-10 rounded-xl">
+<div>
+<h2 class="mt-6 text-center text-3xl font-extrabold text-white">
+                            Sign in to your account
+                        </h2>
+</div>
+<form action="#" class="mt-8 space-y-6" method="POST">
+<input name="remember" type="hidden" value="true"/>
+<div class="rounded-md shadow-sm -space-y-px">
+<div>
+<label class="sr-only" for="email-address">Email address</label>
+<input autocomplete="email" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" id="email-address" name="email" placeholder="Email address" required="" type="email"/>
+</div>
+<div>
+<label class="sr-only" for="password">Password</label>
+<input autocomplete="current-password" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" id="password" name="password" placeholder="Password" required="" type="password"/>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<input class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="ml-2 block text-sm text-white" for="remember-me">
+                                    Remember me
+                                </label>
+</div>
+<div class="text-sm">
+<a class="font-medium text-green-200 hover:text-green-300" href="#">
+                                    Forgot your password?
+                                </a>
+</div>
+</div>
+<div>
+<button class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" type="submit">
+                                Sign in
+                            </button>
+</div>
+<p class="mt-2 text-center text-sm text-gray-200">
+                            Or <a class="font-medium text-green-300 hover:text-green-400 back-to-home" href="#">return to homepage</a>
+</p>
+</form>
+</div>
+</div>
+</div>
+<div class="page" id="register-page">
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 hero-section">
+<div class="max-w-md w-full space-y-8 transparent-bg p-10 rounded-xl">
+<div>
+<h2 class="mt-6 text-center text-3xl font-extrabold text-white">
+                            Create a new account
+                        </h2>
+</div>
+<form id="registerForm" class="mt-8 space-y-6">
+<div class="rounded-md shadow-sm -space-y-px">
+<div>
+<label class="sr-only" for="reg-username">Username</label>
+<input autocomplete="username" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" id="reg-username" name="username" placeholder="Username" required="" type="text"/>
+</div>
+<div>
+<label class="sr-only" for="reg-email-address">Email address</label>
+<input autocomplete="email" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" id="reg-email-address" name="email" placeholder="Email address" required="" type="email"/>
+</div>
+<div>
+<label class="sr-only" for="reg-password">Password</label>
+<input autocomplete="new-password" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" id="reg-password" name="password" placeholder="Password" required="" type="password"/>
+</div>
+<div>
+<label class="sr-only" for="reg-confirm-password">Confirm Password</label>
+<input autocomplete="new-password" class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm" id="reg-confirm-password" name="confirm-password" placeholder="Confirm Password" required="" type="password"/>
+</div>
+</div>
+<div>
+<button class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-500 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500" type="submit">
+                                Register
+                            </button>
+</div>
+<p class="mt-2 text-center text-sm text-gray-200">
+                            Or <a class="font-medium text-green-300 hover:text-green-400 back-to-home" href="#">return to homepage</a>
+</p>
+</form>
+</div>
+</div>
+</div>
+<div class="page" id="cart-page">
+<header class="fixed top-0 left-0 right-0 z-50 bg-gray-900 bg-opacity-80 shadow-lg">
+<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+<a class="text-3xl font-bold text-white back-to-home" href="#">Wanderlust</a>
+<div class="flex items-center space-x-4">
+<a class="text-white hover:text-green-200 back-to-home" href="#">Back to Home</a>
+</div>
+</nav>
+</header>
+<main class="pt-24 bg-gray-50 min-h-screen">
+<div class="container mx-auto px-6">
+<h1 class="text-4xl font-bold text-center mb-12">Your Shopping Cart</h1>
+<div class="bg-white rounded-lg shadow-lg p-8" id="cart-items-container">
+<p class="text-gray-500 text-center">Your cart is currently empty.</p>
+</div>
+<div class="mt-8 flex justify-end">
+<div class="w-full md:w-1/3">
+<div class="bg-white rounded-lg shadow-lg p-6">
+<div class="flex justify-between items-center mb-4">
+<span class="text-lg font-semibold text-gray-700">Subtotal</span>
+<span class="text-lg font-bold text-gray-900" id="cart-subtotal">₹0</span>
+</div>
+<div class="flex justify-between items-center mb-6">
+<span class="text-lg font-semibold text-gray-700">Shipping</span>
+<span class="text-lg font-bold text-gray-900">FREE</span>
+</div>
+<div class="flex justify-between items-center border-t pt-4">
+<span class="text-xl font-bold text-gray-800">Total</span>
+<span class="text-xl font-bold text-green-500" id="cart-total">₹0</span>
+</div>
+<button class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-full transition duration-300">
+                                Checkout
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="bg-gray-800 text-white py-12">
+<div class="container mx-auto px-6 text-center">
+<p>© 2024 Wanderlust. All rights reserved.</p>
+</div>
+</footer>
+</div>
+</div>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pages = document.querySelectorAll('.page');
+            const mainContent = document.getElementById('main-content');
+            const loginPage = document.getElementById('login-page');
+            const registerPage = document.getElementById('register-page');
+            const destinationDetailsPage = document.getElementById('destination-details-page');
+            const cartPage = document.getElementById('cart-page');
+            const loginLink = document.getElementById('login-link');
+            const registerLink = document.getElementById('register-link');
+            const cartLink = document.getElementById('cart-link');
+            const parisDetailsLink = document.getElementById('paris-details-link');
+            const tokyoDetailsLink = document.getElementById('tokyo-details-link');
+            const veniceDetailsLink = document.getElementById('venice-details-link');
+            const homeLinks = document.querySelectorAll('.back-to-home, #home-link');
+            function showPage(pageId, destination) {
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+                 window.scrollTo(0, 0);
+                 if(pageId === 'destination-details-page' && destination){
+                    const detailsPage = document.getElementById('destination-details-page');
+                    const title = detailsPage.querySelector('h1');
+                    const image = detailsPage.querySelector('img');
+                    const description = detailsPage.querySelector('p.text-xl');
+                    if(destination === 'paris'){
+                        title.textContent = 'Paris, France';
+                        image.src = 'hTls6s0XaazR5i_bHOsOoRd0bHTGF311Mu1EKgl3P9C55FN5AzOzH5WQs4DaNZQTGpttps://lh3.googleusercontent.com/aida-/AB6AXuCZa3ld-303publicrwfRH6AGkEZpe5Sx_cbu4iJNxkZdDu2u92-v830uJ_H6Vx0tVjzoApNgazMmYn-DuHy00U7MDZTl3DBE_z-S3A-_EAi392-DMA84nofWA58hCvKP4FzKFPfevIb5GMFv5TtV8UfmFm1oQsAflvejRsbKrs9bcjih9DCWRCfS5nO2FcGM1vy9HcXGEFZ9Vu4ZxU-';
+                        description.textContent = 'The city of love, lights, and endless charm. Paris is a global center for art, fashion, gastronomy and culture. Its 19th-century cityscape is crisscrossed by wide boulevards and the River Seine.';
+                    } else if (destination === 'tokyo'){
+                        title.textContent = 'Tokyo, Japan';
+                        image.src = 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+                        description.textContent = 'A vibrant metropolis where tradition meets the future. Tokyo offers a seemingly endless choice of shopping, entertainment, culture and dining to its visitors.';
+                    } else if(destination === 'venice'){
+                        title.textContent = 'Venice, Italy';
+                        image.src = 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=1966&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
+                        description.textContent = 'A city of canals, gondolas, and captivating architecture. Venice is built on more than 100 small islands in a lagoon in the Adriatic Sea.';
+                    }
+                 }
+            }
+            loginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('login-page');
+            });
+            registerLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('register-page');
+            });
+            cartLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('cart-page');
+            });
+            parisDetailsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('destination-details-page', 'paris');
+            });
+            tokyoDetailsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('destination-details-page', 'tokyo');
+            });
+             veniceDetailsLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('destination-details-page', 'venice');
+            });
+            homeLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showPage('main-content');
+                });
+            });
+            const cartCountElement = document.getElementById('cart-count');
+            const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+            let cartCount = 0;
+            let cartItems = [];
+            function updateCartPage() {
+                const cartItemsContainer = document.getElementById('cart-items-container');
+                const cartSubtotalElement = document.getElementById('cart-subtotal');
+                const cartTotalElement = document.getElementById('cart-total');
+                if (cartItems.length === 0) {
+                    cartItemsContainer.innerHTML = '<p class="text-gray-500 text-center">Your cart is currently empty.</p>';
+                    cartSubtotalElement.textContent = '₹0';
+                    cartTotalElement.textContent = '₹0';
+                    return;
+                }
+                cartItemsContainer.innerHTML = '';
+                let subtotal = 0;
+                cartItems.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.classList.add('flex', 'items-center', 'justify-between', 'py-4', 'border-b');
+                    itemElement.innerHTML = `
+                        <div class="flex items-center">
+                            <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-md mr-4">
+                            <div>
+                                <h3 class="font-bold">${item.name}</h3>
+                                <p class="text-gray-600">₹${item.price.toLocaleString()}</p>
+                            </div>
+                        </div>
+                        <span class="font-bold text-lg">₹${item.price.toLocaleString()}</span>
+                    `;
+                    cartItemsContainer.appendChild(itemElement);
+                    subtotal += item.price;
+                });
+                cartSubtotalElement.textContent = `₹${subtotal.toLocaleString()}`;
+                cartTotalElement.textContent = `₹${subtotal.toLocaleString()}`;
+            }
+            addToCartButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    cartCount++;
+                    cartCountElement.textContent = cartCount;
+                    cartCountElement.classList.add('animate-ping-once');
+                    setTimeout(() => {
+                        cartCountElement.classList.remove('animate-ping-once');
+                    }, 500);
+                    const card = button.closest('.flex-col');
+                    const itemName = card.querySelector('h3').textContent;
+                    const itemPrice = parseFloat(card.querySelector('.text-green-500').textContent.replace('₹', '').replace(',', ''));
+                    const itemImage = card.querySelector('img').src;
+                    cartItems.push({ name: itemName, price: itemPrice, image: itemImage });
+                    updateCartPage();
+                    showPage('cart-page');
+                });
+            });
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    const href = this.getAttribute('href');
+                    if (href === '#login' || href === '#register' || href === '#destination-details' || href === '#cart') return;
+                    e.preventDefault();
+                    const targetElement = document.querySelector(href);
+                    if(mainContent.classList.contains('active') && targetElement) {
+                         targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    } else if (targetElement) {
+                        showPage('main-content');
+                        setTimeout(() => {
+                             targetElement.scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                        }, 100);
+                    }
+                });
+            });
+            const header = document.querySelector('header');
+            window.addEventListener('scroll', () => {
+                if (mainContent.classList.contains('active')) {
+                    if (window.scrollY > 50) {
+                        header.classList.remove('transparent-bg');
+                        header.classList.add('bg-gray-900', 'bg-opacity-80', 'shadow-lg');
+                    } else {
+                        header.classList.add('transparent-bg');
+                        header.classList.remove('bg-gray-900', 'bg-opacity-80', 'shadow-lg');
+                    }
+                }
+            });
+        });
+    </script>
+
+
+</body></html>
+
+
+

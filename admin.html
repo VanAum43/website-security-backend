@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel – User Activity Logs</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #334155;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #1e293b;
+    }
+    tr:nth-child(even) {
+      background: #020617;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🛡 Admin Panel – User Activity Logs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>IP Address</th>
+      <th>User Agent</th>
+      <th>Action</th>
+      <th>Page</th>
+      <th>Time</th>
+    </tr>
+  </thead>
+  <tbody id="logTable"></tbody>
+</table>
+
+<script>
+fetch("https://cyber-admin-backend-1.onrender.com/admin/logs")
+  .then(res => {
+    if (!res.ok) throw new Error("Backend error");
+    return res.json();
+  })
+  .then(data => {
+    const table = document.getElementById("logTable");
+
+    if (!data || data.length === 0) {
+      table.innerHTML = "<tr><td colspan='5'>No logs yet</td></tr>";
+      return;
+    }
+
+    table.innerHTML = "";
+
+    data.reverse().forEach(log => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${log.ip}</td>
+        <td>${log.userAgent}</td>
+        <td>${log.action || "-"}</td>
+        <td>${log.page || "-"}</td>
+        <td>${log.time}</td>
+      `;
+      table.appendChild(row);
+    });
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Backend not running!");
+  });
+</script>
+
+
+</body>
+</html>
+
+
+
