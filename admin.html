@@ -48,10 +48,12 @@
 </table>
 
 <script>
-fetch("https://website-security-backend.onrender.com")
+const BACKEND_URL = "https://website-security-backend.onrender.com";
+
+fetch(`${BACKEND_URL}/logs`)
   .then(res => {
     if (!res.ok) throw new Error("Backend error");
-    return res.json();
+    return res.json();   // ✅ logs is JSON
   })
   .then(data => {
     const table = document.getElementById("logTable");
@@ -80,6 +82,7 @@ fetch("https://website-security-backend.onrender.com")
     alert("Backend not running!");
   });
 </script>
+
 
 
 </body>
