@@ -1,2 +1,3 @@
-const logs = [];
-module.exports = logs;
+app.get("/logs", (req, res) => {
+  res.json(logs);
+});
